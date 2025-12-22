@@ -135,8 +135,20 @@ function makeImmutable(obj) {
  *    makeWord({ a: [0, 1], b: [2, 3], c: [4, 5] }) => 'aabbcc'
  *    makeWord({ H:[0], e: [1], l: [2, 3, 8], o: [4, 6], W:[5], r:[7], d:[9]}) => 'HelloWorld'
  */
-function makeWord(/* lettersObject */) {
-  throw new Error('Not implemented');
+function makeWord(lettersObject) {
+  const words = Object.entries(lettersObject);
+  const maxIndex = words.reduce((acc, [, positions]) => {
+    const localMax = Math.max(...positions);
+    return Math.max(acc, localMax);
+  }, 0);
+  const result = new Array(maxIndex + 1);
+
+  words.forEach(([letter, positions]) => {
+    positions.forEach((position) => {
+      result[position] = letter;
+    });
+  });
+  return result.join('');
 }
 
 /**
@@ -153,8 +165,32 @@ function makeWord(/* lettersObject */) {
  *    sellTickets([25, 25, 50]) => true
  *    sellTickets([25, 100]) => false (The seller does not have enough money to give change.)
  */
-function sellTickets(/* queue */) {
-  throw new Error('Not implemented');
+function sellTickets(queue) {
+  let bill25 = 0;
+  let bill50 = 0;
+  for (let i = 0; i < queue.length; i += 1) {
+    const pay = queue[i];
+    if (pay === 25) {
+      bill25 += 1;
+    } else if (pay === 50) {
+      if (bill25 >= 1) {
+        bill50 += 1;
+        bill25 -= 1;
+      } else {
+        return false;
+      }
+    } else if (pay === 100) {
+      if (bill50 >= 1 && bill25 >= 1) {
+        bill50 -= 1;
+        bill25 -= 1;
+      } else if (bill25 >= 3) {
+        bill25 -= 3;
+      } else {
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 /**
